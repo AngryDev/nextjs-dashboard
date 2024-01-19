@@ -1,11 +1,11 @@
-'use client';
+'use client'
 
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { generatePagination } from '@/app/lib/utils';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import clsx from 'clsx'
+import Link from 'next/link'
+import { generatePagination } from '@/app/lib/utils'
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
+export default function Pagination ({ totalPages }: { totalPages: number }) {
   // NOTE: comment in this code when you get to this point in the course
 
   // const allPages = generatePagination(currentPage, totalPages);
@@ -49,14 +49,14 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
         />
       </div> */}
     </>
-  );
+  )
 }
 
-function PaginationNumber({
+function PaginationNumber ({
   page,
   href,
   isActive,
-  position,
+  position
 }: {
   page: number | string;
   href: string;
@@ -70,9 +70,9 @@ function PaginationNumber({
       'rounded-r-md': position === 'last' || position === 'single',
       'z-10 bg-blue-600 border-blue-600 text-white': isActive,
       'hover:bg-gray-100': !isActive && position !== 'middle',
-      'text-gray-300': position === 'middle',
-    },
-  );
+      'text-gray-300': position === 'middle'
+    }
+  )
 
   return isActive || position === 'middle' ? (
     <div className={className}>{page}</div>
@@ -80,13 +80,13 @@ function PaginationNumber({
     <Link href={href} className={className}>
       {page}
     </Link>
-  );
+  )
 }
 
-function PaginationArrow({
+function PaginationArrow ({
   href,
   direction,
-  isDisabled,
+  isDisabled
 }: {
   href: string;
   direction: 'left' | 'right';
@@ -98,16 +98,16 @@ function PaginationArrow({
       'pointer-events-none text-gray-300': isDisabled,
       'hover:bg-gray-100': !isDisabled,
       'mr-2 md:mr-4': direction === 'left',
-      'ml-2 md:ml-4': direction === 'right',
-    },
-  );
+      'ml-2 md:ml-4': direction === 'right'
+    }
+  )
 
   const icon =
     direction === 'left' ? (
-      <ArrowLeftIcon className="w-4" />
+      <ArrowLeftIcon className='w-4' />
     ) : (
-      <ArrowRightIcon className="w-4" />
-    );
+      <ArrowRightIcon className='w-4' />
+    )
 
   return isDisabled ? (
     <div className={className}>{icon}</div>
@@ -115,5 +115,5 @@ function PaginationArrow({
     <Link className={className} href={href}>
       {icon}
     </Link>
-  );
+  )
 }
