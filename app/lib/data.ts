@@ -1,6 +1,7 @@
 import { sql } from '@vercel/postgres'
 import {
-  CustomerField,
+  Customer,
+  CustomerForm,
   CustomersTableType,
   InvoiceForm,
   InvoicesTable,
@@ -182,10 +183,12 @@ export async function fetchInvoiceById (id: string) {
 
 export async function fetchCustomers () {
   try {
-    const data = await sql<CustomerField>`
+    const data = await sql<Customer>`
       SELECT
         id,
-        name
+        name,
+        email,
+        image_url
       FROM customers
       ORDER BY name ASC
     `
@@ -196,6 +199,54 @@ export async function fetchCustomers () {
     console.error('Database Error:', err)
     throw new Error('Failed to fetch all customers.')
   }
+}
+
+export async function fetchCustomersById (id: string) {
+  // console.log(id)
+  try {
+    const data = await sql<CustomerForm>`
+      SELECT
+      customers.id,
+      customers.name,
+      customers.email,
+      customers.image_url
+      FROM customers
+      WHERE customers.id::text =  ${id};
+    `
+    console.log(data)
+    const customer = data.rows
+    return customer[0]
+  } catch (err) {
+    console.error('Database Error:', err)
+    throw new Error('Failed to fetch customers by ID.')
+  }
+}
+
+export async function fetchFilteredCustomers2 (query: string) {
+  noStore()
+  try {
+    const data = await sql<Customer>`
+		SELECT
+		  customers.id,
+		  customers.name,
+		  customers.email,
+		  customers.image_url
+		FROM customers
+		WHERE
+		  customers.name ILIKE ${`%${query}%`} OR
+      customers.email ILIKE ${`%${query}%`}
+	  `
+
+    const customers = data.rows.map((customer) => ({
+      ...customer
+    }))
+
+    return customers
+  } catch (err) {
+    console.error('Database Error:', err)
+    throw new Error('Failed to fetch customer table.')
+  }
+
 }
 
 export async function fetchFilteredCustomers (query: string) {
