@@ -3,14 +3,14 @@ import { fetchFilteredCustomers2 } from '@/app/lib/data'
 import { UpdateCustomer, DeleteCustomer } from '../customers/buttons'
 
 export default async function CustomersTable ({
-  query
-  // currentPage
+  query,
+  currentPage
 }: {
   query: string;
-  // currentPage: number;
+  currentPage: number;
 }) {
 
-  const customers = await fetchFilteredCustomers2(query)
+  const customers = await fetchFilteredCustomers2(query, currentPage)
 
   return (
     <div className='container-xl '>

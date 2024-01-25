@@ -4,8 +4,8 @@ import { CreateCustomer } from '@/app/ui/customers/buttons'
 import { lusitana } from '@/app/ui/fonts'
 import { TableRowSkeleton } from '@/app/ui/skeletons'
 import { Suspense } from 'react'
-// import Pagination from '@/app/ui/customers/pagination'
-// import { fetchInvoicesPages } from '@/app/lib/data'
+import Pagination from '@/app/ui/customers/pagination'
+import { fetchCustomersPages } from '@/app/lib/data'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default async function Page ({
   const query = searchParams?.query || ''
   const currentPage = Number(searchParams?.page) || 1
 
-  // const totalPages = await fetchInvoicesPages(query)
+  const totalPages = await fetchCustomersPages()
   return (
     <div className='w-full'>
       <div className='flex w-full items-center justify-between'>
@@ -34,11 +34,11 @@ export default async function Page ({
         <CreateCustomer />
       </div>
       <Suspense key={query + currentPage} fallback={<TableRowSkeleton />}>
-        <Table query={query} />
+        <Table  query={query} currentPage={currentPage}  />
       </Suspense>
-      {/* <div className='mt-5 flex w-full justify-center'>
+      <div className='mt-5 flex w-full justify-center'>
         <Pagination totalPages={totalPages} />
-      </div> */}
+      </div>
     </div>
   )
 }

@@ -126,6 +126,20 @@ export async function fetchFilteredInvoices (
   }
 }
 
+export async function fetchCustomersPages () {
+  noStore()
+  try {
+    const count = await sql`SELECT COUNT(*)
+    FROM customers;
+  `
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE)
+    return totalPages
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch total number of invoices.')
+  }
+}
+
 export async function fetchInvoicesPages (query: string) {
   noStore()
   try {
@@ -216,26 +230,30 @@ export async function fetchCustomersById (id: string) {
   }
 }
 
-export async function fetchFilteredCustomers2 (query: string) {
+export async function fetchFilteredCustomers2 (query: string, currentPage: number) {
   noStore()
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE
   try {
     const data = await sql<Customer>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url
-		FROM customers
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`}
-	  `
+    SELECT
+    customers.id,
+    customers.name,
+    customers.email,
+    customers.image_url
+  FROM customers
+  WHERE
+    (customers.name ILIKE ${`%${query}%`} OR customers.name IS NULL)
+  OR
+    (customers.email ILIKE ${`%${query}%`} OR customers.email IS NULL)
+  ORDER BY customers.name DESC
+  LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset};
+`
 
-    const customers = data.rows.map((customer) => ({
-      ...customer
-    }))
+    // const customers = data.rows.map((customer) => ({
+    //   ...customer
+    // }))
 
-    return customers
+    return data.rows
   } catch (err) {
     console.error('Database Error:', err)
     throw new Error('Failed to fetch customer table.')

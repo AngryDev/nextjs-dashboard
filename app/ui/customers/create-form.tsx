@@ -99,7 +99,7 @@ export default function Form () {
         >
           Cancel
         </Link>
-        <Button type='submit'>Create Customer</Button>
+        <Button type='submit'>Save</Button>
       </div>
     </form>
   )
