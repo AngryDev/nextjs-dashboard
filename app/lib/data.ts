@@ -17,15 +17,8 @@ export async function fetchRevenue () {
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore()
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    //console.log('Fetching revenue data...')
-    // await new Promise((resolve) => setTimeout(resolve, 3000))
 
     const data = await sql<Revenue>`SELECT * FROM revenue`
-
-    //console.log('Data fetch completed after 3 seconds.')
 
     return data.rows
   } catch (error) {
@@ -182,6 +175,7 @@ export async function fetchInvoiceById (id: string) {
 }
 
 export async function fetchCustomers () {
+  noStore()
   try {
     const data = await sql<Customer>`
       SELECT
@@ -202,7 +196,7 @@ export async function fetchCustomers () {
 }
 
 export async function fetchCustomersById (id: string) {
-  // console.log(id)
+
   try {
     const data = await sql<CustomerForm>`
       SELECT

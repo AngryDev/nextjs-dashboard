@@ -27,7 +27,7 @@ export async function authenticate (
 
 export type State = {
   errors?: {
-    name?: string[];
+    customerId?: string[];
     amount?: string[];
     status?: string[];
   };
@@ -36,12 +36,12 @@ export type State = {
 
 const FormSchema = z.object({
   id: z.string(),
-  name: z.string({
+  customerId: z.string({
     invalid_type_error: 'Please select a customer.'
   }),
-  amount: z.coerce.number({
-    invalid_type_error: 'Please put an number amount.'
-  }),
+  amount: z.coerce
+    .number()
+    .gt(0, { message: 'Please enter an amount greater than $0.' }),
   status: z.enum(['pending', 'paid'], {
     invalid_type_error: 'Please select an invoice status.'
   }),
@@ -85,8 +85,6 @@ export async function createCustomer (prevState: CustomerState, formData: FormDa
     image_url: formData.get('imageUrl')
   })
 
-  // console.log(formData)
-
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     const errors = validatedFields.error.flatten().fieldErrors
@@ -119,12 +117,10 @@ export async function createCustomer (prevState: CustomerState, formData: FormDa
 
 export async function createInvoice (prevState: State, formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
-    name: formData.get('name'),
+    customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status')
   })
-
-  console.log(validatedFields)
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
@@ -135,7 +131,7 @@ export async function createInvoice (prevState: State, formData: FormData) {
   }
 
   // Prepare data for insertion into the database
-  const { name, amount, status } = validatedFields.data
+  const { customerId, amount, status } = validatedFields.data
   const amountInCents = amount * 100
   const date = new Date().toISOString().split('T')[0]
 
@@ -143,7 +139,7 @@ export async function createInvoice (prevState: State, formData: FormData) {
   try {
     await sql`
     INSERT INTO invoices (customer_id, amount, status, date)
-    VALUES (${name}, ${amountInCents}, ${status}, ${date})
+    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `
 
   } catch (error) {
@@ -166,7 +162,7 @@ export async function updateInvoice (
   formData: FormData,
 ) {
   const validatedFields = UpdateInvoice.safeParse({
-    name: formData.get('name'),
+    customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status')
   })
@@ -178,13 +174,13 @@ export async function updateInvoice (
     }
   }
 
-  const { name, amount, status } = validatedFields.data
+  const { customerId, amount, status } = validatedFields.data
   const amountInCents = amount * 100
 
   try {
     await sql`
       UPDATE invoices
-      SET customer_id = ${name}, amount = ${amountInCents}, status = ${status}
+      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
       WHERE id = ${id}
     `
   } catch (error) {
