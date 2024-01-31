@@ -142,7 +142,7 @@ export default function Form ({ customers }: { customers: CustomerField[] }) {
         >
           Cancel
         </Link>
-        <Button type='submit'>Save</Button>
+        <Button type='submit'>Save Invoice</Button>
       </div>
     </form>
   )

@@ -104,7 +104,7 @@ export default function EditCustomerForm ({
         >
           Cancel
         </Link>
-        <Button type='submit'>Save Customer</Button>
+        <Button type='submit'>Update Customer</Button>
       </div>
     </form>
   )
